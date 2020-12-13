@@ -44,11 +44,16 @@ method2 = 'MidPoint-Fixed-Point'
 t2, y2 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-1, [A, 0.0, ], args=(m, k),
                          method=method2, atol=1e-6, rtol=1e-6)
 
+method3 = 'MidPoint_Newton'
+t3, y3 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-1, [A, 0.0, ], args=(m, k),
+                         method=method3, atol=1e-6, rtol=1e-6)
+
 
 plt.figure(1)
-plt.plot(t, x, 'r-', linewidth=2, label='analytic')
+plt.plot(t, x, 'k-', linewidth=2, label='analytic')
 plt.plot(sol.t, sol.y[0], 'g--', linewidth=2, markersize=5, label='solve_ivp ' + method1)
 plt.plot(t2, y2[0], 'b.', linewidth=2, markersize=2, label='solve_sympletic ' + method2)
+plt.plot(t3, y3[0], 'r.', linewidth=2, markersize=2, label='solve_sympletic ' + method3)
 plt.xlabel(r'$t$')
 plt.ylabel(r'$x$')
 plt.grid('both')
