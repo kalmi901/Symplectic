@@ -41,7 +41,7 @@ def gmres(A: np.array, x: np.array, b: np.array, max_iter: int = 10, restart: in
             w -= H[j][k] * V[j]
         H[k + 1][k] = np.linalg.norm(w)
         V[k + 1] = w / H[k + 1][k]
-        print(H[k + 1][k])
+
         # End of Arnoldi steps
         # print(H)
         # print(V)
