@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def bicg(A: np.array, x: np.array, b: np.array, max_iter: int = 10, tol: float = 1e-6):
+def bicg(A: np.array, x: np.array, b: np.array, max_iter: int = 100, tol: float = 1e-6):
     flag = 0
 
     # Initialization

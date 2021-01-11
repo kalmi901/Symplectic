@@ -1,3 +1,5 @@
 .idea
 __pycache__/*
 Krylov/__pycache__/*
+Direct/__pycache__/*
+Stationary/__pycache__/*
