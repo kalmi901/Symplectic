@@ -25,12 +25,12 @@ function [x, e] = GMRES( A, b, x, max_iterations, threshold)
     % eliminate the last element in H ith row and update the rotation matrix
     [H(1:k+1, k) cs(k) sn(k)] = apply_givens_rotation(H(1:k+1,k), cs, sn, k);
 	H, Q
-	kbhit()
+	pause
     % update the residual vector
     beta(k + 1) = -sn(k) * beta(k);
     beta(k)     = cs(k) * beta(k)
     error       = abs(beta(k + 1)) / b_norm
-	kbhit()
+	pause
     % save the error
     e = [e; error];
 

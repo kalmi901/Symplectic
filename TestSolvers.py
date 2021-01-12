@@ -4,7 +4,7 @@ from Direct.LUP import lup_solve, lup_solve2
 from Direct.Gauss import ge_solve, dge_solve
 from Direct.Analytic import anal_solve
 from Stationary.IterativeSolvers import gauss_seidel_solve, jacobi_solve
-from Krylov.BICG import bicg
+from Krylov.GMRES import gmres_solve
 import os
 import time
 
@@ -116,17 +116,23 @@ b = np.array(b0)
 print("Result:")
 print(anal_solve(a, b))
 
-print("Gauss-Seidel iteration:")
+print("\nGauss-Seidel iteration:")
 a = np.array(A0)
 b = np.array(b0)
 x = np.ones([size])
-print(gauss_seidel_solve(a, b, x, size*50))
+print(gauss_seidel_solve(a, b, x, size*100))
 
-print("Jacobi iteration:")
+print("\nJacobi iteration:")
 a = np.array(A0)
 b = np.array(b0)
 x = np.ones([size])
-print(jacobi_solve(a, b, x, size*50))
+print(jacobi_solve(a, b, x, size*100))
+
+print("\nGMRES(5):")
+a = np.array(A0)
+b = np.array(b0)
+x = np.ones([size])
+print(gmres_solve(a, b, x, size*100, 5))
 
 print("\nPython Solver:")
 a = np.array(A0)

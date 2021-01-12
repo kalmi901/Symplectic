@@ -16,7 +16,7 @@ def gauss_seidel_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10
 	b_norm = np.linalg.norm(b)
 	#rb_norm = 1 / b_norm if b_norm != 0 else 1
 	rb_norm = 1
-	error = r_norm * rb_norm	# absolute tolerance
+	error = r_norm * rb_norm	# tolerance
 	
 	if (error <= tol):
 		# The initial guess is accurate enough
@@ -78,7 +78,7 @@ def jacobi_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 100, tol
 	b_norm = np.linalg.norm(b)
 	#rb_norm = 1 / b_norm if b_norm != 0 else 1
 	rb_norm = 1
-	error = r_norm * rb_norm	# absolute tolerance
+	error = r_norm * rb_norm	# tolerance
 	
 	if (error <= tol):
 		# The initial guess is accurate enough
