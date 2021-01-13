@@ -8,7 +8,7 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
     # m         - integer number of iterations between restarts
     
     # ic        - max number of iterations
-    # error     - absolute difference0
+    # error     - absolute difference
     flag = 0
     ic = 0
     n = len(A)
@@ -22,7 +22,6 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
     
     if (error <= tol):
         # The initial guess is accurate enough
-        flag = 0
         return x, 0, 0, error
     
     # Initialize workspace
@@ -35,7 +34,7 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
     converged = 0
     
     # Iteration
-    while ic < max_iter:
+    while ic < max_iter-1:
         V[:, 0] = r / r_norm    # v
         s = e * r_norm 
         for i in range(m):
@@ -59,12 +58,14 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
             if (error <= tol):
                 converged = 1
                 break
+            ic += 1
+            if (ic == max_iter-1):
+                break
         
         y = __backward_substitution(H[0 : i + 1, 0 : i + 1], s[0 : i + 1])  # i exist outside the loop python feature
         x += np.dot(V[:, 0 : i + 1], y)
         r = b - np.matmul(A, x)
         r_norm = np.linalg.norm(r)
-        ic += 1
         
         if (converged == 1):
             break

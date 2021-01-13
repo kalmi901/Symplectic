@@ -5,6 +5,7 @@ from Direct.Gauss import ge_solve, dge_solve
 from Direct.Analytic import anal_solve
 from Stationary.IterativeSolvers import gauss_seidel_solve, jacobi_solve
 from Krylov.GMRES import gmres_solve
+from Krylov.BICG import bicg_solve
 import os
 import time
 
@@ -42,7 +43,7 @@ b0 = np.array([1, 23, 3])
 #b = np.array([1, 23])
 #print(lup_solve(A, b))			# [5, -3]
 
-size = 2
+size = 7
 A0 = np.random.rand(size,size)
 #A0 = np.array(magic(size), dtype=float)
 #print(A)
@@ -132,7 +133,13 @@ print("\nGMRES(5):")
 a = np.array(A0)
 b = np.array(b0)
 x = np.ones([size])
-print(gmres_solve(a, b, x, size*100, 5))
+print(gmres_solve(a, b, x, size*1000, 4))
+
+print("\nBICG:")
+a = np.array(A0)
+b = np.array(b0)
+x = np.ones([size])
+print(bicg_solve(a, b, x, size*100))
 
 print("\nPython Solver:")
 a = np.array(A0)
