@@ -20,7 +20,7 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
     rb_norm = 1
     error = r_norm * rb_norm
     
-    if (error <= tol):
+    if error <= tol:
         # The initial guess is accurate enough
         return x, 0, 0, error
     
@@ -44,10 +44,10 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
                 H[k, i] = np.dot(w.transpose(), V[:, k])
                 w -= H[k, i] * V[:, k]
             H[i + 1, i] = np.linalg.norm(w)
-            V[:, i + 1]  = w / H[i + 1, i]
+            V[:, i + 1] = w / H[i + 1, i]
             
             for k in range(i):
-                H[k : k+2, i] = __apply_plane_rotations(H[k, i], H[k + 1, i], cs[k], sn[k])
+                H[k: k+2, i] = __apply_plane_rotations(H[k, i], H[k + 1, i], cs[k], sn[k])
             
             cs[i], sn[i] = __generate_plane_rotations(H[i, i], H[i + 1, i], cs[i], sn[i])
             H[i: i+2, i]= __apply_plane_rotations(H[i, i], H[i + 1, i], cs[i], sn[i])
@@ -55,33 +55,32 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
             
             error = abs(s[i + 1]) * rb_norm
 
-            if (error <= tol):
+            if error <= tol:
                 converged = 1
                 break
             ic += 1
-            if (ic == max_iter-1):
+            if ic == max_iter-1:
                 break
         
-        y = __backward_substitution(H[0 : i + 1, 0 : i + 1], s[0 : i + 1])  # i exist outside the loop python feature
-        x += np.dot(V[:, 0 : i + 1], y)
+        y = __backward_substitution(H[0: i + 1, 0: i + 1], s[0: i + 1])  # i exist outside the loop python feature
+        x += np.dot(V[:, 0: i + 1], y)
         r = b - np.matmul(A, x)
         r_norm = np.linalg.norm(r)
         
-        if (converged == 1):
+        if converged == 1:
             break
     
-    if (ic + 1 == max_iter):
+    if ic + 1 == max_iter:
         flag = 1
     
     return x, flag, ic+1, error
     
-    
-    
+
 def __generate_plane_rotations(dx, dy, cs, sn):
-    if (dy == 0.0):
+    if dy == 0.0:
         cs = 1.0
         sn = 0.0
-    elif (abs(dy) > abs(dx)):
+    elif abs(dy) > abs(dx):
         temp = dx / dy
         sn = 1.0 / np.sqrt(1.0 + temp * temp)
         cs = temp * sn
@@ -101,10 +100,10 @@ def __apply_plane_rotations(dx, dy, cs, sn):
 
 
 def __backward_substitution(U: np.array, b: np.array):
-	n = len(U)					# Size of the matrix
-	x = np.zeros([n])			# Empty array to store the results
-	for i in reversed(range(n)):
-		s = sum(U[i, j] * x[j] for j in range(i, n))
-		x[i] = (b[i] - s) / U[i,i]
-		
-	return	x
+    n = len(U)					# Size of the matrix
+    x = np.zeros([n])			# Empty array to store the results
+    for i in reversed(range(n)):
+        s = sum(U[i, j] * x[j] for j in range(i, n))
+        x[i] = (b[i] - s) / U[i, i]
+
+    return x

@@ -6,7 +6,6 @@ def bicg_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 100, tol: 
     # flag      - 0 converged to the desired tolerance within max_iter iterations
     #           - 1 iterated to the max_iter but did not converged
     #           --1 breakdown (method failure) 
-    # m         - integer number of iterations between restarts
     
     # ic        - max number of iterations
     # error     - absolute difference   
@@ -16,7 +15,7 @@ def bicg_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 100, tol: 
     n = len(A)
     r = b - np.matmul(A, x)
     r_norm = np.linalg.norm(r)
-    b_norm = np.linalg.norm(r)
+    b_norm = np.linalg.norm(b)
     #rb_norm = 1/ b_norm if b_norm !=0 else 1
     rb_norm = 1
     error = r_norm * rb_norm
@@ -53,4 +52,4 @@ def bicg_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 100, tol: 
             return x, 0, ic+1, error
             
     # No convergence, return the actual state
-    return x, 1, ic+1, error 
+    return x, 1, ic+1, error

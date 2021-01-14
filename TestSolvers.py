@@ -43,7 +43,7 @@ b0 = np.array([1, 23, 3])
 #b = np.array([1, 23])
 #print(lup_solve(A, b))			# [5, -3]
 
-size = 7
+size = 3
 A0 = np.random.rand(size,size)
 #A0 = np.array(magic(size), dtype=float)
 #print(A)
@@ -102,8 +102,8 @@ print("Result:")
 print(ge_solve(a, b))
 
 print("\nDivison-FreeGauss elimination:")
-a = np.array(A0)
-b = np.array(b0)
+a = np.array(A0, dtype=np.double)
+b = np.array(b0, dtype=np.double)
 #print("Input matrix:")
 #print(a)
 print("Result:")
@@ -129,11 +129,11 @@ b = np.array(b0)
 x = np.ones([size])
 print(jacobi_solve(a, b, x, size*100))
 
-print("\nGMRES(5):")
+print("\nGMRES(10):")
 a = np.array(A0)
 b = np.array(b0)
 x = np.ones([size])
-print(gmres_solve(a, b, x, size*1000, 4))
+print(gmres_solve(a, b, x, size*1000, 10))
 
 print("\nBICG:")
 a = np.array(A0)
