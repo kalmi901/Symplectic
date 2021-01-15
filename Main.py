@@ -41,8 +41,8 @@ sol = solve_ivp(hamiltonian_ode, [0, t_max], [A, 0.0], args=(m, k),
 
 # Numerical solution (sympletic solvers)
 method2 = 'MidPoint-Fixed-Point'
-t2, y2 = solve_sympletic(hamiltonian_ode, [0, t_max], 5e-3, [A, 0.0, ], args=(m, k),
-                         method=method2, atol=1e-12, rtol=1e-12)
+t2, y2 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-2, [A, 0.0, ], args=(m, k),
+                         method=method2, atol=1e-6, rtol=1e-6)
 
 method3 = 'MidPoint-Newton'
 # linsolve = 'analytic'
@@ -50,20 +50,32 @@ method3 = 'MidPoint-Newton'
 # linsolve = 'gauss'
 #linsolve = 'div-free gauss'
 #linsolve = 'jacobi-iter'
-linsolve = 'gauss-seidel-iter'
+#linsolve = 'gauss-seidel-iter'
 #linsolve = 'gmres'
-#linsolve = 'bicg'
-t3, y3 = solve_sympletic(hamiltonian_ode, [0, t_max], 5e-3, [A, 0.0, ], args=(m, k),
-                         method=method3, linear_solver=linsolve, atol=1e-12, rtol=1e-12)
+linsolve = 'bicg'
+t3, y3 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-2, [A, 0.0, ], args=(m, k),
+                         method=method3, linear_solver=linsolve, atol=1e-6, rtol=1e-6)
 
 
 plt.figure(1)
 plt.plot(t, x, 'k-', linewidth=2, label='analytic')
-plt.plot(sol.t, sol.y[0], 'g--', linewidth=2, markersize=5, label='solve_ivp ' + method1)
-plt.plot(t2, y2[0], 'b.', linewidth=2, markersize=5, label='solve_sympletic ' + method2)
-plt.plot(t3, y3[0], 'r.', linewidth=2, markersize=5, label='solve_sympletic ' + method3)
+plt.plot(sol.t, sol.y[0], 'g-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
+plt.plot(t2, y2[0], 'b.', linewidth=2, markersize=2, label='solve_sympletic ' + method2)
+plt.plot(t3, y3[0], 'r.', linewidth=2, markersize=2, label='solve_sympletic ' + method3 + ' @' + linsolve)
 plt.xlabel(r'$t$')
 plt.ylabel(r'$x$')
 plt.grid('both')
 plt.legend()
+
+
+plt.figure(2)
+plt.plot(x, p, 'k-', linewidth=2, label='analytic')
+plt.plot(sol.y[0], sol.y[1], 'g-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
+plt.plot(y2[0], y2[1], 'b.', linewidth=2, markersize=2, label='solve_sympletic ' + method2)
+plt.plot(y3[0], y3[1], 'r.', linewidth=2, markersize=2, label='solve_sympletic ' + method3 + ' @' + linsolve)
+plt.xlabel(r'$x$')
+plt.ylabel(r'$p$')
+plt.grid('both')
+plt.legend()
+
 plt.show()

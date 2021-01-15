@@ -43,7 +43,7 @@ b0 = np.array([1, 23, 3])
 #b = np.array([1, 23])
 #print(lup_solve(A, b))			# [5, -3]
 
-size = 3
+size = 8
 A0 = np.random.rand(size,size)
 #A0 = np.array(magic(size), dtype=float)
 #print(A)

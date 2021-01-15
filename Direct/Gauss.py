@@ -143,7 +143,7 @@ def __upper_triangleMatrix(A: np.array, b: np.array, pivot = True):
 		#input()
 		# Make all rows below this one 0 in current column
 		for k in range(j+1, n):
-			c = -A[k, j] / A [j, j]
+			c = -A[k, j] / A[j, j]
 			b[k] += c * b[j]
 			for i in range(j, n):
 				if (j == i):
@@ -323,4 +323,4 @@ def __backward_substitution(U: np.array, b: np.array):
 		s = sum(U[i, j] * x[j] for j in range(i, n))
 		x[i] = (b[i] - s) / U[i,i]
 		
-	return	x
+	return x

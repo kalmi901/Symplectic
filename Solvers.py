@@ -16,6 +16,9 @@ def solve_sympletic(func, t_span, dt, y0, args, method,
     elif method == 'MidPoint-Newton':
         return __midpoint_newton_iteration(func, y0, t_span, dt, args, max_iter, atol, rtol,
                                            linear_solver, max_linear_iter, pivot, restart)
+    elif method == 'MipPint-JacoibiFree-Newton':
+        return __midpoint_jacobifree_newton_iteration(func, y0, t_span, dt, args, max_iter, atol, rtol,
+                                                      max_linear_iter, restart)
     else:
         print("solve_sympletic: the required method: " + method + " does not exist.")
         return None
@@ -32,7 +35,7 @@ def __midpoint_newton_iteration(odefun, y0, t_span, dt, args, max_iter, atol, rt
 
     # Main loop
     for i in range(1, k):
-        y0 = y[0, i - 1] + dt / 2 * np.array(odefun(t[i - 1], y[:, i - 1], *args))      # forward euler step with half step size(predictor)
+        y0 = y[:, i - 1] + dt / 2 * np.array(odefun(t[i - 1], y[:, i - 1], *args))      # forward euler step with half step size(predictor)
         y_mid = __newton_step(odefun, y0, y[:, i - 1], t[i - i] + dt / 2, dt / 2, args,
                               max_iter, atol, rtol, linear_solver, max_linear_iter,
                               pivot, restart)                                           # backward euler step with half step
@@ -49,7 +52,24 @@ def __midpoint_fixed_iteration(odefun, y0, t_span, dt, args, max_iter, atol, rto
 
     # Main loop
     for i in range(1, k):
-        y0 = y[0, i - 1] + dt / 2 * np.array(odefun(t[i - 1], y[:, i - 1], *args))  # forward euler step with halg step size (predictor)
+        y0 = y[:, i - 1] + dt / 2 * np.array(odefun(t[i - 1], y[:, i - 1], *args))  # forward euler step with half step size (predictor)
+        y_mid = __fixed_point_step(odefun, y0, y[:, i - 1], t[i - 1] + dt / 2, dt / 2, args,
+                                   max_iter, atol, rtol)                            # backward euler step with half step
+        y[:, i] = 2 * y_mid[:] - y[:, i-1]                                          # midpoint rule
+    return t, y
+
+
+def __midpoint_jacobifree_newton_iteration(odefunc, y0, t_span, dt, args, max_iter, atol, rtol,
+                                                      max_linear_iter, restart):
+    t = np.arange(t_span[0], t_span[1]+dt, dt)
+    k = len(t)
+    n = len(y0)
+    y = np.zeros([n, k])
+    y[:, 0] = y0[:]
+
+    # Main loop
+    for i in range(1, k):
+        y0 = y[:, i - 1] + dt / 2 * np.array(odefun(t[i - 1], y[:, i - 1], *args))  # forward euler step with half step size (predictor)
         y_mid = __fixed_point_step(odefun, y0, y[:, i - 1], t[i - 1] + dt / 2, dt / 2, args,
                                    max_iter, atol, rtol)                            # backward euler step with half step
         y[:, i] = 2 * y_mid[:] - y[:, i-1]                                          # midpoint rule
@@ -130,3 +150,40 @@ def __fixed_point_step(odefun, ynew, yold, tm, dt2, args, max_iter, atol, rtol):
 
     return ynew
 
+
+def __jacobifree_newton_step(odefin, ynew, yold, tm, dt2, args, max_iter, atol, rtol,
+                             max_linear_iter, pivot, restart):
+    n = len(ynew)
+    m = max_iter if restart < 0 else restart
+    b = np.zeros(n)
+    r = ynew - (yold + dt2 * np.array(odefun(tm, ynew, *args)))
+    error = np.linalg.norm(r)
+    if error < max(rtol * np.linalg.norm(ynew), atol):
+        return ynew
+
+
+    #Initialize workspace
+    V = np.zeros([n, m + 1])
+    H = np.zeros([m + 1, m])
+    cs = np.zeros([m])
+    sn = np.zeros([m])
+    e = np.zeros([m + 1])
+    e[0] = 1
+    converged = 0
+
+
+    r_norm = error
+    for newtonIter in range(0, max_iter):
+        while linearIter < max_linear_iter-1:
+            V[:, 0] = r / r_norm
+            s = e * r_norm
+            for i in range(m):
+                # w = np.matmul(A, V[:, i])
+                w = []
+                for k in range(i+1):
+                    H[k, i] = np.dot(w.transpose(), V[:, k])
+                    w -= H[k, i] * V[:, k]
+                H[i + 1, i] = np.linalg.norm(w)
+                V[:, i + 1] = w / H[i + 1, i]
+
+    return ynew
