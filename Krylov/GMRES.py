@@ -50,7 +50,7 @@ def gmres_solve(A: np.array, b: np.array, x: np.array, max_iter: int = 10, resta
                 H[k: k+2, i] = __apply_plane_rotations(H[k, i], H[k + 1, i], cs[k], sn[k])
             
             cs[i], sn[i] = __generate_plane_rotations(H[i, i], H[i + 1, i], cs[i], sn[i])
-            H[i: i+2, i]= __apply_plane_rotations(H[i, i], H[i + 1, i], cs[i], sn[i])
+            H[i: i+2, i] = __apply_plane_rotations(H[i, i], H[i + 1, i], cs[i], sn[i])
             s[i], s[i + 1] = __apply_plane_rotations(s[i], s[i + 1], cs[i], sn[i])
             
             error = abs(s[i + 1]) * rb_norm

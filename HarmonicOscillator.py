@@ -25,7 +25,7 @@ k = 2       # spring stiffness
 A = 1.0     # amplitude - x(0)
 H = 0.5*k*A**2
 # print(H)
-t_max = 100.0
+t_max = 20.0
 dt = 0.1
 f = (k / m) ** 0.5  # angular frequency
 
@@ -41,7 +41,7 @@ sol = solve_ivp(hamiltonian_ode, [0, t_max], [A, 0.0], args=(m, k),
 
 # Numerical solution (sympletic solvers)
 method2 = 'MidPoint-Fixed-Point'
-t2, y2 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-2, [A, 0.0, ], args=(m, k),
+t2, y2 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-3, [A, 0.0, ], args=(m, k),
                          method=method2, atol=1e-6, rtol=1e-6)
 
 method3 = 'MidPoint-Newton'
@@ -51,17 +51,22 @@ method3 = 'MidPoint-Newton'
 #linsolve = 'div-free gauss'
 #linsolve = 'jacobi-iter'
 #linsolve = 'gauss-seidel-iter'
-#linsolve = 'gmres'
-linsolve = 'bicg'
-t3, y3 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-2, [A, 0.0, ], args=(m, k),
-                         method=method3, linear_solver=linsolve, atol=1e-6, rtol=1e-6)
+linsolve = 'gmres'
+#linsolve = 'bicg'
+t3, y3 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-3, [A, 0.0, ], args=(m, k),
+                         method=method3, linear_solver=linsolve, atol=1e-8, rtol=1e-8)
 
+
+method4 = 'MipPint-Jacobi-Free-Newton'
+t4, y4 = solve_sympletic(hamiltonian_ode, [0, t_max], 1e-3, [A, 0.0, ], args=(m, k),
+                         method=method4, atol=1e-9, rtol=1e-9, max_linear_iter=10)
 
 plt.figure(1)
 plt.plot(t, x, 'k-', linewidth=2, label='analytic')
-plt.plot(sol.t, sol.y[0], 'g-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
-plt.plot(t2, y2[0], 'b.', linewidth=2, markersize=2, label='solve_sympletic ' + method2)
-plt.plot(t3, y3[0], 'r.', linewidth=2, markersize=2, label='solve_sympletic ' + method3 + ' @' + linsolve)
+plt.plot(sol.t, sol.y[0], 'm-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
+plt.plot(t2, y2[0], 'b.', linewidth=2, markersize=4, label='solve_sympletic ' + method2)
+plt.plot(t3, y3[0], 'r.', linewidth=2, markersize=4, label='solve_sympletic ' + method3 + ' @' + linsolve)
+plt.plot(t4, y4[0], 'g.', linewidth=2, markersize=4, label='solve_sympletic ' + method4)
 plt.xlabel(r'$t$')
 plt.ylabel(r'$x$')
 plt.grid('both')
@@ -70,9 +75,10 @@ plt.legend()
 
 plt.figure(2)
 plt.plot(x, p, 'k-', linewidth=2, label='analytic')
-plt.plot(sol.y[0], sol.y[1], 'g-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
-plt.plot(y2[0], y2[1], 'b.', linewidth=2, markersize=2, label='solve_sympletic ' + method2)
-plt.plot(y3[0], y3[1], 'r.', linewidth=2, markersize=2, label='solve_sympletic ' + method3 + ' @' + linsolve)
+plt.plot(sol.y[0], sol.y[1], 'm-', linewidth=1, markersize=2, label='solve_ivp ' + method1)
+plt.plot(y2[0], y2[1], 'b.', linewidth=2, markersize=4, label='solve_sympletic ' + method2)
+plt.plot(y3[0], y3[1], 'r.', linewidth=2, markersize=4, label='solve_sympletic ' + method3 + ' @' + linsolve)
+plt.plot(y4[0], y4[1], 'g.', linewidth=2, markersize=4, label='solve_sympletic ' + method4)
 plt.xlabel(r'$x$')
 plt.ylabel(r'$p$')
 plt.grid('both')
